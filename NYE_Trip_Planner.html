@@ -1,0 +1,1438 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BR30KLYN — NYE 2026 Trip Planner</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* Disco scrollbar */
+  ::-webkit-scrollbar { width: 14px; }
+  ::-webkit-scrollbar-track {
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #1a1a2e 100%);
+  }
+  ::-webkit-scrollbar-thumb {
+    background:
+      linear-gradient(180deg,
+        #FF4F8B 0%, #7C4DFF 15%, #00BCD4 30%, #FFD700 45%,
+        #FF4F8B 55%, #E040FB 70%, #4FC3F7 85%, #FF4F8B 100%);
+    background-size: 100% 200%;
+    border-radius: 7px;
+    border: 2px solid #1a1a2e;
+    animation: disco-scroll 3s linear infinite;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    border-width: 1px;
+  }
+  @keyframes disco-scroll {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 0% 200%; }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: linear-gradient(135deg, #FFE0EC 0%, #FFF3E0 35%, #B2EBF2 100%);
+    min-height: 100vh;
+    color: #2C2540;
+    line-height: 1.5;
+    position: relative;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url('https://www.zikeo.net/wp-content/uploads/2026/01/harry-styles-kiss-all-the-times-disco-occasionally-1024x647.jpg') center center / cover no-repeat;
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+  }
+  body > * { position: relative; z-index: 1; }
+
+  /* (sparkle canvas removed) */
+  header {
+    text-align: center;
+    padding: 44px 20px 24px;
+    background: linear-gradient(135deg, #FF6FBB 0%, #FF4F8B 30%, #E040A0 60%, #C850C0 100%);
+    color: white;
+    box-shadow: 0 4px 20px rgba(0,0,0,.15);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '\1F382 \1F973 \1F389 \2728 \1F382 \1F973 \1F389 \2728 \1F382 \1F973 \1F389 \2728 \1F382 \1F973 \1F389 \2728';
+    position: absolute; top: -6px; left: 0; right: 0;
+    font-size: 1.4rem; letter-spacing: 6px; opacity: 0.25;
+    white-space: nowrap; overflow: hidden; pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background-image: radial-gradient(circle at 20% 80%, rgba(255,255,255,.12) 0, transparent 40%),
+                      radial-gradient(circle at 80% 20%, rgba(255,255,255,.12) 0, transparent 40%);
+    pointer-events: none;
+  }
+  header h1 {
+    font-size: 4.6rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    text-shadow: 0 2px 8px rgba(0,0,0,.2);
+    position: relative;
+    z-index: 1;
+  }
+  header h1 .glitter-30 {
+    font-size: 6.8rem;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+    margin: 0 2px;
+    font-weight: 900;
+    background: linear-gradient(
+      105deg,
+      #fff 0%, #ffe066 12%, #ffd700 20%, #fff 28%,
+      #ffd700 40%, #fff 48%, #ffe066 56%, #ffd700 64%,
+      #fff 72%, #ffd700 84%, #ffe066 92%, #fff 100%
+    );
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glitter-shift 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(255,215,0,0.6)) drop-shadow(0 0 20px rgba(255,215,0,0.3));
+    text-shadow: none;
+  }
+  @keyframes glitter-shift {
+    0%   { background-position: 100% 50%; }
+    50%  { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+  /* Vinyl Records */
+  .disco-ball {
+    position: absolute;
+    top: 14px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%,
+      #fff 0%, #ddd 3%, #111 5%,
+      #1a1a2e 8%, #16213e 15%, #0f3460 25%, #1a1a2e 35%,
+      #16213e 45%, #0f3460 55%, #1a1a2e 65%,
+      #16213e 75%, #111 90%, #000 100%);
+    box-shadow:
+      0 0 12px rgba(15,52,96,0.5),
+      0 0 30px rgba(15,52,96,0.2),
+      inset 0 0 15px rgba(0,0,0,0.5);
+    z-index: 2;
+    animation: vinyl-spin 3s linear infinite;
+  }
+  .disco-ball::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 50%;
+    background:
+      repeating-radial-gradient(circle at 50% 50%,
+        transparent 0px, transparent 3px,
+        rgba(30,80,140,0.15) 3.5px, transparent 4px,
+        transparent 7px, rgba(30,80,140,0.1) 7.5px, transparent 8px
+      );
+  }
+  .disco-ball::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      #4FC3F7 0%, #0288D1 40%, #01579B 70%, #1a1a2e 100%);
+    box-shadow: 0 0 6px rgba(79,195,247,0.6);
+    border: 2px solid rgba(255,255,255,0.2);
+  }
+  .disco-ball.left { left: 24px; }
+  .disco-ball.right { right: 24px; animation-direction: reverse; }
+  /* Vinyl shine reflection */
+  .disco-rays {
+    position: absolute;
+    top: 14px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .disco-rays::before {
+    content: '';
+    position: absolute;
+    top: -30%; left: -30%;
+    width: 60%;
+    height: 160%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 60%);
+    transform: rotate(-25deg);
+  }
+  .disco-rays.left { left: 24px; }
+  .disco-rays.right { right: 24px; }
+  .disco-ray { display: none; }
+  @keyframes vinyl-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  header .subtitle {
+    font-size: 1rem;
+    opacity: 0.95;
+    font-weight: 300;
+  }
+  header .dates {
+    font-size: 0.85rem;
+    margin-top: 10px;
+    background: rgba(255,255,255,.2);
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Countdown */
+  .countdown-wrap {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .cd-unit {
+    background: rgba(255,255,255,.2);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    padding: 10px 14px;
+    min-width: 68px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,.25);
+  }
+  .cd-unit .cd-num {
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .cd-unit .cd-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.85;
+  }
+
+  /* View toggle */
+  .view-toggle-bar {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    max-width: 500px;
+    margin: 20px auto 0;
+    background: white;
+    border-radius: 14px;
+    padding: 4px;
+    box-shadow: 0 4px 16px rgba(124,77,255,0.1);
+  }
+  .view-toggle-btn {
+    flex: 1;
+    padding: 12px 18px;
+    border: none;
+    background: transparent;
+    border-radius: 11px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #888;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+  }
+  .view-toggle-btn.active {
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255,79,139,0.3);
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+
+  .builder { display: flex; flex-direction: column; gap: 18px; }
+
+  .step {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: 0 4px 16px rgba(124, 77, 255, 0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: all 0.2s ease;
+  }
+  .step:hover { border-color: #FFB7D5; }
+  .step h2 {
+    font-size: 0.95rem;
+    color: #7C4DFF;
+    margin-bottom: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-num {
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
+  .toggle-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .toggle-btn {
+    padding: 14px 12px;
+    border: 2px solid #E0E0E0;
+    background: white;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    font-family: inherit;
+  }
+  .toggle-btn:hover {
+    border-color: #FF4F8B;
+    transform: translateY(-2px);
+  }
+  .toggle-btn.active {
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(255, 79, 139, 0.4);
+  }
+
+  .package-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+  }
+  .pkg-btn {
+    padding: 12px 8px;
+    border: 2px solid #E0E0E0;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    font-family: inherit;
+  }
+  .pkg-btn:hover { transform: translateY(-2px); border-color: #00BCD4; }
+  .pkg-btn.active {
+    background: linear-gradient(135deg, #00BCD4, #7C4DFF);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(0, 188, 212, 0.4);
+  }
+  .pkg-btn .icon { font-size: 1.5rem; margin-bottom: 2px; display: block; }
+  .pkg-btn .label { font-size: 0.85rem; font-weight: 700; display: block; }
+  .pkg-btn .desc { font-size: 0.7rem; opacity: 0.8; }
+
+  select, input[type="number"], input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid #E0E0E0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    background: white;
+    color: #2C2540;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  select:focus, input:focus {
+    outline: none;
+    border-color: #7C4DFF;
+    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.15);
+  }
+
+  .hotel-info {
+    margin-top: 12px;
+    padding: 14px;
+    background: linear-gradient(135deg, #FFF3F8, #F3E5F5);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    color: #555;
+    border-left: 3px solid #FF4F8B;
+  }
+  .hotel-info .hi-row { margin-bottom: 4px; }
+  .hotel-info strong { color: #7C4DFF; }
+  .hotel-info a { color: #FF4F8B; text-decoration: none; font-weight: 600; }
+  .hotel-info a:hover { text-decoration: underline; }
+
+  .nights-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .nights-input input { flex: 0 0 90px; text-align: center; font-weight: 700; font-size: 1.1rem; }
+  .nights-label { color: #666; font-size: 0.9rem; }
+
+  /* Results panel */
+  .result {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+  }
+  .result-card {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 28px 26px;
+    box-shadow: 0 8px 32px rgba(124, 77, 255, 0.12), inset 0 1px 0 rgba(255,255,255,0.6);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+  .result-card h2 {
+    font-size: 1.2rem;
+    color: #7C4DFF;
+    margin-bottom: 4px;
+    font-weight: 800;
+  }
+  .result-sub {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 20px;
+  }
+  .summary-hotel {
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    color: white;
+    padding: 16px 18px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+  }
+  .summary-hotel .name { font-weight: 800; font-size: 1.1rem; margin-bottom: 2px; }
+  .summary-hotel .loc { font-size: 0.85rem; opacity: 0.9; }
+  .summary-hotel .meta { font-size: 0.8rem; margin-top: 6px; opacity: 0.85; }
+
+  .breakdown {
+    border-top: 1px solid #F0E6F4;
+    padding-top: 12px;
+  }
+  .breakdown h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #888;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .line {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 0.92rem;
+    border-bottom: 1px dashed #F0E6F4;
+  }
+  .line:last-child { border-bottom: none; }
+  .line .label { color: #444; }
+  .line .label small { color: #999; font-size: 0.78rem; display: block; margin-top: 1px; }
+  .line .amount { font-weight: 700; color: #2C2540; white-space: nowrap; }
+
+  .total-box {
+    margin-top: 16px;
+    padding: 18px;
+    background: linear-gradient(135deg, #FFF3E0, #FFE0EC);
+    border-radius: 12px;
+    border: 2px dashed #FF4F8B;
+  }
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .total-row:last-child { margin-bottom: 0; }
+  .total-row .label { color: #555; font-size: 0.9rem; font-weight: 600; }
+  .total-row .amount { font-size: 1.4rem; font-weight: 900; color: #7C4DFF; }
+  .total-row.grand .amount {
+    font-size: 1.9rem;
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .total-row.grand .label { color: #2C2540; font-size: 1rem; font-weight: 700; }
+
+  .disclaimer {
+    margin-top: 16px;
+    font-size: 0.75rem;
+    color: #999;
+    line-height: 1.5;
+    padding: 12px;
+    background: #FAFAFA;
+    border-radius: 8px;
+  }
+
+  /* Cost Split */
+  .cost-split-box {
+    margin-top: 18px;
+    padding: 18px;
+    background: rgba(224, 247, 250, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    border: 1px solid rgba(178, 235, 242, 0.5);
+  }
+  .cost-split-box h3 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #7C4DFF;
+    margin-bottom: 10px;
+  }
+  .cost-split-box .split-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .cost-split-box .split-input-row input {
+    flex: 0 0 70px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .cost-split-box .split-input-row span { font-size: 0.88rem; color: #555; }
+  .cost-split-result {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #2C2540;
+    margin-bottom: 6px;
+  }
+  .cost-split-result .big-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .venmo-reminder {
+    font-size: 0.82rem;
+    color: #FF4F8B;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* RSVP Button & Form */
+  .rsvp-section {
+    margin-top: 18px;
+  }
+  .rsvp-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: white;
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+    box-shadow: 0 4px 16px rgba(255,79,139,0.3);
+  }
+  .rsvp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255,79,139,0.45);
+  }
+  .rsvp-form {
+    margin-top: 12px;
+    display: none;
+    animation: fadeSlide 0.3s ease;
+  }
+  .rsvp-form.show { display: block; }
+  .rsvp-form input {
+    margin-bottom: 10px;
+  }
+  .rsvp-form .rsvp-submit {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #00BCD4, #7C4DFF);
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .rsvp-form .rsvp-submit:hover { transform: translateY(-1px); }
+
+  /* Confetti */
+  @keyframes confettiFall {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(120px) rotate(720deg); opacity: 0; }
+  }
+  .confetti-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+  }
+  .confetti-piece {
+    position: absolute;
+    top: -20px;
+    font-size: 1.5rem;
+    animation: confettiFall 2.5s ease-out forwards;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    box-shadow: 0 8px 24px rgba(124,77,255,0.3);
+    z-index: 9999;
+    transition: transform 0.4s ease;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Group Results */
+  .group-results-view {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+    display: none;
+  }
+  .group-results-view.active { display: block; }
+  .gr-card {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(124,77,255,0.08);
+    margin-bottom: 20px;
+  }
+  .gr-card h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #7C4DFF;
+    margin-bottom: 14px;
+  }
+  .gr-stat {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .gr-stat-item {
+    flex: 1;
+    min-width: 120px;
+    background: linear-gradient(135deg, #FFF3E0, #FFE0EC);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .gr-stat-item .gr-num {
+    font-size: 2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .gr-stat-item .gr-lbl { font-size: 0.8rem; color: #888; font-weight: 600; }
+  .vote-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+  .vote-bar-label { min-width: 140px; font-weight: 600; color: #444; }
+  .vote-bar-track {
+    flex: 1;
+    height: 24px;
+    background: #F0E6F4;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .vote-bar-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    border-radius: 12px;
+    transition: width 0.5s ease;
+    min-width: 2px;
+  }
+  .vote-bar-count { min-width: 40px; font-weight: 700; color: #7C4DFF; text-align: right; }
+  .rsvp-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    font-size: 0.85rem;
+  }
+  .rsvp-table th {
+    text-align: left;
+    padding: 8px 10px;
+    color: #888;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .rsvp-table td {
+    padding: 10px;
+    background: #FAFAFA;
+    border: none;
+  }
+  .rsvp-table tr td:first-child { border-radius: 10px 0 0 10px; }
+  .rsvp-table tr td:last-child { border-radius: 0 10px 10px 0; }
+  .no-rsvps {
+    text-align: center;
+    padding: 40px;
+    color: #aaa;
+    font-size: 1rem;
+  }
+
+  /* Group Chat */
+  .chat-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 30px;
+  }
+  .chat-card {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(124,77,255,0.08), inset 0 1px 0 rgba(255,255,255,0.6);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: border-color 0.2s;
+  }
+  .chat-card:hover { border-color: #FFB7D5; }
+  .chat-card h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #7C4DFF;
+    margin-bottom: 16px;
+  }
+  .chat-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .chat-input-row input[type="text"]:first-child { flex: 0 0 160px; }
+  .chat-input-row input[type="text"]:nth-child(2) { flex: 1; min-width: 180px; }
+  .chat-post-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #FF4F8B, #7C4DFF);
+    color: white;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .chat-post-btn:hover { transform: translateY(-1px); }
+  .chat-messages { max-height: 400px; overflow-y: auto; }
+  .chat-bubble {
+    padding: 12px 16px;
+    border-radius: 14px;
+    margin-bottom: 8px;
+    animation: fadeSlide 0.3s ease;
+  }
+  .chat-bubble:nth-child(odd) { background: linear-gradient(135deg, #FFF3F8, #FFF8FB); }
+  .chat-bubble:nth-child(even) { background: linear-gradient(135deg, #F3E5F5, #EDE7F6); }
+  .chat-bubble .cb-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .chat-bubble .cb-name { font-weight: 700; color: #7C4DFF; font-size: 0.85rem; }
+  .chat-bubble .cb-time { font-size: 0.72rem; color: #aaa; }
+  .chat-bubble .cb-msg { font-size: 0.92rem; color: #333; }
+
+  footer {
+    text-align: center;
+    padding: 30px 20px;
+    font-size: 0.8rem;
+    color: #888;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,.25);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 600px) {
+    .chat-input-row { flex-direction: column; }
+    .chat-input-row input[type="text"]:first-child { flex: auto; }
+    .cd-unit { min-width: 58px; padding: 8px 10px; }
+    .cd-unit .cd-num { font-size: 1.3rem; }
+    .rsvp-table { font-size: 0.75rem; }
+    .rsvp-table th, .rsvp-table td { padding: 6px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🎉 BR<span class="glitter-30">30</span>KLYN 🎉</h1>
+  <p class="subtitle">Ring in the big 3-0 and NYE in style — pick your dream trip below!</p>
+  <div class="dates">Dec 28, 2026 — Jan 2, 2027 (5 nights)</div>
+</header>
+
+<!-- View Toggle -->
+<div class="view-toggle-bar" id="view-toggle">
+  <button class="view-toggle-btn active" data-view="builder">&#127919; Build Your Trip</button>
+  <button class="view-toggle-btn" data-view="results">&#128202; Group Results</button>
+</div>
+
+<!-- Builder View -->
+<main id="builder-view">
+  <section class="builder">
+    <div class="step">
+      <h2><span class="step-num">1</span> Pick Your Destination</h2>
+      <div class="toggle-group">
+        <button class="toggle-btn active" data-dest="pr">&#127958;&#65039; Puerto Rico</button>
+        <button class="toggle-btn" data-dest="mx">&#127796; Mexico</button>
+      </div>
+    </div>
+
+    <div class="step">
+      <h2><span class="step-num">2</span> Pick Your Hotel</h2>
+      <select id="hotel"></select>
+      <div class="hotel-info" id="hotel-info"></div>
+    </div>
+
+    <div class="step">
+      <h2><span class="step-num">3</span> Choose Your Package</h2>
+      <div class="package-group">
+        <button class="pkg-btn" data-pkg="solo">
+          <span class="icon">&#129485;</span>
+          <span class="label">Solo</span>
+          <span class="desc">1/room</span>
+        </button>
+        <button class="pkg-btn active" data-pkg="couple">
+          <span class="icon">&#128145;</span>
+          <span class="label">Couple</span>
+          <span class="desc">2/room</span>
+        </button>
+        <button class="pkg-btn" data-pkg="group">
+          <span class="icon">&#128111;&#8205;&#9792;&#65039;</span>
+          <span class="label">Group</span>
+          <span class="desc">4/room</span>
+        </button>
+      </div>
+      <div style="margin-top:12px; font-size:0.82rem; color:#666; text-align:center;">
+        Each person still pays their own flight &#9992;&#65039;
+      </div>
+    </div>
+
+    <div class="step">
+      <h2><span class="step-num">4</span> Flying From</h2>
+      <select id="origin">
+        <option value="Atlanta">Atlanta, GA (ATL)</option>
+        <option value="DC">Washington, DC (DCA/IAD)</option>
+        <option value="Nashville">Nashville, TN (BNA)</option>
+        <option value="Cincinnati">Cincinnati, OH (CVG)</option>
+        <option value="Salt Lake City">Salt Lake City, UT (SLC)</option>
+        <option value="Boise">Boise, ID (BOI)</option>
+      </select>
+    </div>
+
+    <div class="step">
+      <h2><span class="step-num">5</span> How Many Nights?</h2>
+      <div class="nights-input">
+        <input type="number" id="nights" value="5" min="1" max="21">
+        <span class="nights-label">nights at the hotel</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="result">
+    <div class="result-card">
+      <h2>Your Package</h2>
+      <div class="result-sub" id="result-sub">Per-person cost breakdown</div>
+      <div class="summary-hotel" id="summary-hotel"></div>
+      <div class="breakdown">
+        <h3>What YOU pay</h3>
+        <div id="breakdown-lines"></div>
+        <div class="total-box">
+          <div class="total-row">
+            <span class="label">Your subtotal (solo traveler)</span>
+            <span class="amount" id="subtotal-per-person">$0</span>
+          </div>
+          <div class="total-row grand">
+            <span class="label" id="total-label">Total for your package</span>
+            <span class="amount" id="total-amount">$0</span>
+          </div>
+        </div>
+      </div>
+      <div class="disclaimer">
+        <strong>Notes:</strong> Rates are midpoint NYE estimates — actual pricing varies with booking date and room type. PR estimates include food (~$75/day/person for non-AI hotels); Mexico AI rates include all meals &amp; drinks. Transport is a per-person estimate for a shared van. Tips are ~$25/person/day.
+      </div>
+
+      <!-- Cost Split -->
+      <div class="cost-split-box" id="cost-split-box">
+        <h3>&#128176; Cost Split Calculator</h3>
+        <div class="split-input-row">
+          <input type="number" id="split-count" value="2" min="1" max="20">
+          <span>people splitting this trip equally</span>
+        </div>
+        <div class="cost-split-result" id="cost-split-result"></div>
+        <div class="venmo-reminder">💡 We may be able to get a room block discount — more picks = better rate!</div>
+      </div>
+
+      <!-- RSVP -->
+      <div class="rsvp-section">
+        <button class="rsvp-btn" id="rsvp-btn">&#128232; Submit My Pick</button>
+        <div class="rsvp-form" id="rsvp-form">
+          <input type="text" id="rsvp-name" placeholder="Your Name">
+          <button class="rsvp-submit" id="rsvp-submit">&#127881; Lock It In!</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Group Results View -->
+<div class="group-results-view" id="group-results-view">
+  <div class="gr-card">
+    <h2>&#128202; Group Overview</h2>
+    <div class="gr-stat" id="gr-stats"></div>
+  </div>
+  <div class="gr-card">
+    <h2>&#127958;&#65039; Destination Votes</h2>
+    <div id="gr-dest-votes"></div>
+  </div>
+  <div class="gr-card">
+    <h2>&#127976; Top Hotels</h2>
+    <div id="gr-hotel-votes"></div>
+  </div>
+  <div class="gr-card">
+    <h2>&#128221; Everyone's Picks</h2>
+    <div id="gr-picks-table"></div>
+  </div>
+</div>
+
+<!-- Group Chat -->
+<div class="chat-section" id="chat-section">
+  <div class="chat-card">
+    <h2>&#128172; Group Chat</h2>
+    <div class="chat-input-row">
+      <input type="text" id="chat-name" placeholder="Your name" maxlength="30">
+      <input type="text" id="chat-msg" placeholder="Say something..." maxlength="300">
+      <button class="chat-post-btn" id="chat-post">Post</button>
+    </div>
+    <div class="chat-messages" id="chat-messages"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<footer>
+  Made with &#128150; for BR30KLYN &middot; NYE 2026-2027
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────
+
+const HOTELS = {
+  pr: [
+    { name:"La Concha Resort", location:"Condado, San Juan", collection:"Autograph Collection by Marriott", url:"https://www.marriott.com/hotels/travel/sjuak-la-concha-renaissance-san-juan-resort/", rate:715, luxury:7, badge:"BEST FOR NYE", allInclusive:false },
+    { name:"San Juan Marriott Resort & Stellaris Casino", location:"Condado, San Juan", collection:"Marriott", url:"https://www.marriott.com/hotels/travel/sjupr-san-juan-marriott-resort-and-stellaris-casino/", rate:680, luxury:6.5, badge:"GROUP FRIENDLY", allInclusive:false },
+    { name:"Wyndham Grand Rio Mar", location:"Rio Grande (30-35 min from San Juan)", collection:"Rainforest Beach & Golf Resort", url:"https://www.wyndhamhotels.com/wyndham-grand/rio-grande-puerto-rico/wyndham-grand-rio-mar-puerto-rico-golf-and-beach-resort/overview", rate:775, luxury:7.5, badge:"ALL-INCLUSIVE OPTION", allInclusive:false },
+    { name:"The Royal Sonesta San Juan", location:"Isla Verde, Carolina", collection:"Sonesta", url:"https://www.sonesta.com/royal-sonesta/pr/carolina/royal-sonesta-san-juan", rate:715, luxury:7, badge:"BEST BEACH", allInclusive:false },
+    { name:"Courtyard by Marriott Isla Verde Beach Resort", location:"Isla Verde, Carolina", collection:"Marriott", url:"https://www.marriott.com/hotels/travel/sjucy-courtyard-isla-verde-beach-resort/", rate:550, luxury:5.5, badge:"BEST VALUE", allInclusive:false },
+    { name:"El Conquistador Resort", location:"Fajardo (east coast)", collection:"A Hilton Hotel", url:"https://www.hilton.com/en/hotels/sjuelqq-el-conquistador-resort/", rate:655, luxury:7, badge:"MOST UNIQUE", allInclusive:false },
+    { name:"Hyatt Regency Grand Reserve Puerto Rico", location:"Rio Grande", collection:"Hyatt", url:"https://www.hyatt.com/hyatt-regency/en-US/sjogr-hyatt-regency-grand-reserve-puerto-rico", rate:715, luxury:7, badge:"BIGGEST ROOMS", allInclusive:false },
+    { name:"Embassy Suites by Hilton San Juan", location:"Isla Verde, Carolina", collection:"Hilton", url:"https://www.hilton.com/en/hotels/sjueses-embassy-suites-san-juan-hotel-and-casino/", rate:485, luxury:5, badge:"BUDGET PICK", allInclusive:false }
+  ],
+  mx: [
+    { name:"Hotel Xcaret Mexico", location:"Riviera Maya, Playa del Carmen", collection:"Grupo Xcaret \u00b7 All-Fun Inclusive", url:"https://www.hotelxcaret.com/en/hotel-xcaret-mexico/", rate:675, luxury:7, badge:"BEST ACTIVITIES", allInclusive:true, airport:"CUN" },
+    { name:"Hotel Xcaret Arte", location:"Riviera Maya, Playa del Carmen", collection:"Grupo Xcaret \u00b7 Adults-Only", url:"https://www.hotelxcaret.com/en/hotel-xcaret-arte/", rate:825, luxury:8, badge:"MOST BOUGIE", allInclusive:true, airport:"CUN" },
+    { name:"Paradisus Playa del Carmen", location:"Riviera Maya, Playa del Carmen", collection:"Melia Hotels", url:"https://www.melia.com/en/hotels/mexico/playa-del-carmen/paradisus-playa-del-carmen", rate:525, luxury:6, badge:"BEST NIGHTLIFE", allInclusive:true, airport:"CUN" },
+    { name:"Hard Rock Hotel Riviera Maya", location:"Riviera Maya, Puerto Aventuras", collection:"Hard Rock International", url:"https://www.hardrockhotels.com/riviera-maya/", rate:550, luxury:6, badge:"MOST FUN", allInclusive:true, airport:"CUN" },
+    { name:"UNICO 20 87 Hotel Riviera Maya", location:"Riviera Maya, Akumal", collection:"Hyatt Inclusive \u00b7 Adults-Only", url:"https://www.unicohotelrivieramaya.com/", rate:750, luxury:8, badge:"HIGHEST RATED", allInclusive:true, airport:"CUN" },
+    { name:"Hyatt Ziva Cancun", location:"Cancun Hotel Zone", collection:"Hyatt Inclusive \u00b7 Family-Friendly", url:"https://www.hyatt.com/hyatt-ziva/en-US/cunzi-hyatt-ziva-cancun", rate:625, luxury:7, badge:"BEST LOCATION", allInclusive:true, airport:"CUN" },
+    { name:"Moon Palace Cancun", location:"Cancun, south of Hotel Zone", collection:"Palace Resorts", url:"https://www.moonpalace.com/cancun/", rate:525, luxury:6, badge:"MEGA RESORT", allInclusive:true, airport:"CUN" },
+    { name:"Hyatt Ziva Los Cabos", location:"Los Cabos, San Jose del Cabo", collection:"Hyatt Inclusive \u00b7 Recently Renovated", url:"https://www.hyatt.com/hyatt-ziva/en-US/sjdzi-hyatt-ziva-los-cabos", rate:575, luxury:7, badge:"JUST RENOVATED", allInclusive:true, airport:"SJD" },
+    { name:"Riu Palace Cabo San Lucas", location:"Los Cabos, Cabo San Lucas", collection:"RIU Hotels \u00b7 On Medano Beach", url:"https://www.riu.com/en/hotel/mexico/los-cabos/hotel-riu-palace-cabo-san-lucas/", rate:450, luxury:5.5, badge:"BEST CABO BEACH", allInclusive:true, airport:"SJD" },
+    { name:"Pueblo Bonito Sunset Beach", location:"Los Cabos, Pacific Side", collection:"Pueblo Bonito \u00b7 Golf & Spa", url:"https://www.pueblobonito.com/resorts/sunset-beach", rate:500, luxury:6.5, badge:"BEST SUNSETS", allInclusive:true, airport:"SJD" },
+    { name:"Iberostar Selection Playa Mita", location:"Punta Mita, Riviera Nayarit", collection:"Iberostar \u00b7 IHG One Rewards", url:"https://www.iberostar.com/en/hotels/riviera-nayarit/iberostar-selection-playa-mita/", rate:450, luxury:6, badge:"BEST BEACH", allInclusive:true, airport:"PVR" },
+    { name:"Secrets Bahia Mita Surf & Spa", location:"Punta Mita, Riviera Nayarit", collection:"Hyatt Inclusive \u00b7 Adults-Only", url:"https://www.secretsresorts.com/en/resorts/mexico/bahia-mita", rate:625, luxury:7.5, badge:"MOST STUNNING", allInclusive:true, airport:"PVR" },
+    { name:"Dreams Tulum Resort & Spa", location:"Tulum", collection:"Hyatt Inclusive \u00b7 Family-Friendly", url:"https://www.dreamsresorts.com/en/resorts/mexico/tulum", rate:450, luxury:5.5, badge:"TULUM VIBES", allInclusive:true, airport:"CUN" },
+    { name:"Hilton Tulum Riviera Maya", location:"Tulum Area (Chemuyil)", collection:"Hilton \u00b7 Opened 2023", url:"https://www.hilton.com/en/hotels/cuntrhi-hilton-tulum-riviera-maya-all-inclusive-resort/", rate:575, luxury:6.5, badge:"NEWEST RESORT", allInclusive:true, airport:"CUN" }
+  ]
+};
+
+const FLIGHTS = {
+  SJU: { "Atlanta":575, "DC":600, "Nashville":625, "Cincinnati":775, "Salt Lake City":875, "Boise":925 },
+  CUN: { "Atlanta":650, "DC":700, "Nashville":725, "Cincinnati":875, "Salt Lake City":975, "Boise":1025 },
+  SJD: { "Atlanta":1150, "DC":1100, "Nashville":1000, "Cincinnati":1175, "Salt Lake City":1050, "Boise":1125 },
+  PVR: { "Atlanta":700, "DC":725, "Nashville":750, "Cincinnati":900, "Salt Lake City":850, "Boise":900 }
+};
+
+const TRANSPORT = { SJU:35, CUN:63, SJD:110, PVR:60 };
+const FOOD_PER_DAY_NON_AI = 75;
+const TIPS_PER_DAY = 25;
+const PACKAGES = {
+  solo:   { label:"Solo",   partySize:1, split:1, icon:"\u{1F9CD}" },
+  couple: { label:"Couple", partySize:2, split:2, icon:"\u{1F491}" },
+  group:  { label:"Group",  partySize:4, split:4, icon:"\u{1F46F}\u200D\u2640\uFE0F" }
+};
+
+const WEATHER = {
+  SJU: { icon:"\u2600\uFE0F", temp:"82\u00B0F / 28\u00B0C", desc:"Mostly Sunny", note:"Low rain chance" },
+  CUN: { icon:"\u2600\uFE0F", temp:"84\u00B0F / 29\u00B0C", desc:"Sunny & Humid", note:"Brief showers possible" },
+  SJD: { icon:"\u2600\uFE0F", temp:"78\u00B0F / 26\u00B0C", desc:"Sunny & Dry", note:"Perfect beach weather" },
+  PVR: { icon:"\u2600\uFE0F", temp:"80\u00B0F / 27\u00B0C", desc:"Sunny & Warm", note:"Dry season" },
+  TULUM: { icon:"\u2600\uFE0F", temp:"83\u00B0F / 28\u00B0C", desc:"Warm & Breezy", note:"Occasional showers" }
+};
+
+// ── STATE ─────────────────────────────────────────────────────────────
+let state = { destination:"pr", hotelIdx:0, package:"couple", origin:"Atlanta", nights:5 };
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+const fmt = n => "$" + Math.round(n).toLocaleString("en-US");
+function getAirport(hotel) { return state.destination === "pr" ? "SJU" : (hotel.airport || "CUN"); }
+function currentHotel() { return HOTELS[state.destination][state.hotelIdx]; }
+
+function getWeather(hotel) {
+  if (state.destination === "pr") return WEATHER.SJU;
+  if (hotel.location.toLowerCase().includes("tulum")) return WEATHER.TULUM;
+  const apt = hotel.airport || "CUN";
+  return WEATHER[apt] || WEATHER.CUN;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────
+function renderHotels() {
+  const sel = document.getElementById("hotel");
+  sel.innerHTML = "";
+  HOTELS[state.destination].forEach((h, i) => {
+    const opt = document.createElement("option");
+    opt.value = i;
+    opt.textContent = h.name + "  \u2014  $" + h.rate + "/night";
+    sel.appendChild(opt);
+  });
+  sel.value = state.hotelIdx;
+  renderHotelInfo();
+}
+
+function renderHotelInfo() {
+  const h = currentHotel();
+  const w = getWeather(h);
+  const aiTxt = h.allInclusive
+    ? '<strong>All-Inclusive</strong>: meals, drinks & activities included'
+    : '<strong>Not All-Inclusive</strong>: food is an extra (~$75/day/person)';
+  document.getElementById("hotel-info").innerHTML =
+    `<div class="hi-row"><strong>\u{1F4CD}</strong> ${h.location}</div>` +
+    `<div class="hi-row"><strong>\u{1F3E8}</strong> ${h.collection}</div>` +
+    `<div class="hi-row"><strong>\u2B50</strong> ${h.luxury}/10 luxury \u00b7 ${h.badge}</div>` +
+    `<div class="hi-row">\u{1F37D}\uFE0F ${aiTxt}</div>` +
+    `<div class="hi-row">${w.icon} <strong>Late Dec Weather:</strong> ${w.temp}, ${w.desc} \u2014 ${w.note}</div>` +
+    `<div class="hi-row" style="margin-top:6px;"><a href="${h.url}" target="_blank">Visit hotel website \u2192</a></div>`;
+}
+
+function calculate() {
+  const h = currentHotel();
+  const pkg = PACKAGES[state.package];
+  const nights = Math.max(1, parseInt(state.nights) || 1);
+  const airport = getAirport(h);
+  const flight = FLIGHTS[airport][state.origin];
+  const transport = TRANSPORT[airport];
+  const roomTotal = h.rate * nights;
+  const roomShare = roomTotal / pkg.split;
+  const foodPerPerson = h.allInclusive ? 0 : FOOD_PER_DAY_NON_AI * nights;
+  const tipsPerPerson = TIPS_PER_DAY * nights;
+  const perPerson = flight + roomShare + foodPerPerson + tipsPerPerson + transport;
+  const packageTotal = perPerson * pkg.partySize;
+  return { hotel:h, nights, airport, flight, roomTotal, roomShare, foodPerPerson, tipsPerPerson, transport, perPerson, packageTotal, pkg, partySize:pkg.partySize, split:pkg.split };
+}
+
+function renderResult() {
+  const r = calculate();
+  const h = r.hotel;
+  document.getElementById("summary-hotel").innerHTML =
+    `<div class="name">${h.name}<span class="badge">${h.badge}</span></div>` +
+    `<div class="loc">${h.location}</div>` +
+    `<div class="meta">${r.nights} nights \u00b7 ${r.pkg.icon} ${r.pkg.label} (${r.split}/room) \u00b7 from ${state.origin}</div>`;
+
+  let lines = "";
+  lines += `<div class="line"><span class="label">Flight (roundtrip) <small>to ${r.airport}</small></span><span class="amount">${fmt(r.flight)}</span></div>`;
+  lines += `<div class="line"><span class="label">Your share of room <small>${fmt(h.rate)}/night \u00d7 ${r.nights} nights \u00f7 ${r.split}</small></span><span class="amount">${fmt(r.roomShare)}</span></div>`;
+  if (r.foodPerPerson > 0) {
+    lines += `<div class="line"><span class="label">Food & drinks <small>~$75/day \u00d7 ${r.nights} days</small></span><span class="amount">${fmt(r.foodPerPerson)}</span></div>`;
+  } else {
+    lines += `<div class="line"><span class="label">Food & drinks <small>included in all-inclusive rate</small></span><span class="amount" style="color:#27AE60;">INCL</span></div>`;
+  }
+  lines += `<div class="line"><span class="label">Tips / incidentals <small>$${TIPS_PER_DAY}/day \u00d7 ${r.nights} days</small></span><span class="amount">${fmt(r.tipsPerPerson)}</span></div>`;
+  lines += `<div class="line"><span class="label">Airport transport <small>per-person share</small></span><span class="amount">${fmt(r.transport)}</span></div>`;
+  document.getElementById("breakdown-lines").innerHTML = lines;
+
+  document.getElementById("subtotal-per-person").textContent = fmt(r.perPerson);
+  if (r.partySize === 1) {
+    document.getElementById("total-label").textContent = "Your total (Solo)";
+    document.getElementById("total-amount").textContent = fmt(r.packageTotal);
+    document.getElementById("result-sub").textContent = "You're traveling solo \u2014 full room to yourself";
+  } else {
+    document.getElementById("total-label").textContent = "Total for your " + r.pkg.label.toLowerCase() + " (" + r.partySize + " people)";
+    document.getElementById("total-amount").textContent = fmt(r.packageTotal);
+    document.getElementById("result-sub").textContent = "Per-person \u00d7 " + r.partySize + " travelers sharing 1 room";
+  }
+
+  // Update split default
+  document.getElementById("split-count").value = r.partySize;
+  renderCostSplit();
+}
+
+// ── COST SPLIT ────────────────────────────────────────────────────────
+function renderCostSplit() {
+  const r = calculate();
+  const splitCount = Math.max(1, parseInt(document.getElementById("split-count").value) || 1);
+  const totalAllRooms = r.packageTotal;
+  const perPersonSplit = totalAllRooms / splitCount;
+  const el = document.getElementById("cost-split-result");
+  if (splitCount === r.partySize) {
+    el.innerHTML = `Each person pays: <span class="big-num">${fmt(r.perPerson)}</span>`;
+  } else {
+    el.innerHTML = `${fmt(totalAllRooms)} total \u00f7 ${splitCount} people = <span class="big-num">${fmt(perPersonSplit)}</span> each`;
+  }
+}
+document.getElementById("split-count").addEventListener("input", renderCostSplit);
+
+// ── RSVP ──────────────────────────────────────────────────────────────
+function getRSVPs() {
+  try { return JSON.parse(localStorage.getItem("nye_trip_rsvps") || "[]"); } catch(e) { return []; }
+}
+function saveRSVP(rsvp) {
+  const all = getRSVPs();
+  all.push(rsvp);
+  localStorage.setItem("nye_trip_rsvps", JSON.stringify(all));
+}
+
+function buildRSVPData(name) {
+  const r = calculate();
+  return {
+    name: name,
+    destination: state.destination === "pr" ? "Puerto Rico" : "Mexico",
+    destKey: state.destination,
+    hotel: r.hotel.name,
+    package: r.pkg.label,
+    origin: state.origin,
+    nights: r.nights,
+    perPerson: Math.round(r.perPerson),
+    total: Math.round(r.packageTotal),
+    timestamp: new Date().toISOString()
+  };
+}
+
+function encodeStateToHash(name) {
+  const data = { d:state.destination, h:state.hotelIdx, p:state.package, o:state.origin, n:state.nights, name:name };
+  return btoa(JSON.stringify(data));
+}
+
+function decodeHashToRSVP(hash) {
+  try {
+    const data = JSON.parse(atob(hash));
+    // Temporarily set state to compute costs
+    const prev = { ...state };
+    state.destination = data.d; state.hotelIdx = data.h; state.package = data.p; state.origin = data.o; state.nights = data.n;
+    const rsvp = buildRSVPData(data.name);
+    // Restore state
+    Object.assign(state, prev);
+    return rsvp;
+  } catch(e) { return null; }
+}
+
+function showConfetti() {
+  const overlay = document.createElement("div");
+  overlay.className = "confetti-overlay";
+  const emojis = ["\u{1F389}","\u{1F38A}","\u2728","\u{1F382}","\u{1F973}","\u{1F388}","\u{1F496}","\u{1F31F}"];
+  for (let i = 0; i < 40; i++) {
+    const p = document.createElement("div");
+    p.className = "confetti-piece";
+    p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    p.style.left = Math.random() * 100 + "%";
+    p.style.animationDelay = (Math.random() * 1.5) + "s";
+    p.style.animationDuration = (1.5 + Math.random() * 2) + "s";
+    overlay.appendChild(p);
+  }
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 4000);
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3500);
+}
+
+document.getElementById("rsvp-btn").addEventListener("click", () => {
+  document.getElementById("rsvp-form").classList.toggle("show");
+});
+
+document.getElementById("rsvp-submit").addEventListener("click", () => {
+  const name = document.getElementById("rsvp-name").value.trim();
+  if (!name) { document.getElementById("rsvp-name").style.borderColor = "#FF4F8B"; return; }
+  document.getElementById("rsvp-name").style.borderColor = "";
+  const rsvp = buildRSVPData(name);
+  saveRSVP(rsvp);
+  // Update hash for sharing
+  window.location.hash = encodeStateToHash(name);
+  showConfetti();
+  showToast("\u{1F389} " + name + "'s pick is locked in!");
+  document.getElementById("rsvp-form").classList.remove("show");
+  document.getElementById("rsvp-name").value = "";
+});
+
+// ── GROUP RESULTS ─────────────────────────────────────────────────────
+function renderGroupResults() {
+  const rsvps = getRSVPs();
+
+  // Stats
+  const statsEl = document.getElementById("gr-stats");
+  if (rsvps.length === 0) {
+    statsEl.innerHTML = "";
+    document.getElementById("gr-dest-votes").innerHTML = '<div class="no-rsvps">No RSVPs yet! Be the first to submit your pick.</div>';
+    document.getElementById("gr-hotel-votes").innerHTML = "";
+    document.getElementById("gr-picks-table").innerHTML = "";
+    return;
+  }
+  const avgCost = Math.round(rsvps.reduce((s, r) => s + r.perPerson, 0) / rsvps.length);
+  statsEl.innerHTML =
+    `<div class="gr-stat-item"><div class="gr-num">${rsvps.length}</div><div class="gr-lbl">Total RSVPs</div></div>` +
+    `<div class="gr-stat-item"><div class="gr-num">${fmt(avgCost)}</div><div class="gr-lbl">Avg Per-Person</div></div>`;
+
+  // Dest votes
+  const destCounts = {};
+  rsvps.forEach(r => { destCounts[r.destination] = (destCounts[r.destination] || 0) + 1; });
+  const maxDest = Math.max(...Object.values(destCounts));
+  let destHtml = "";
+  for (const [dest, count] of Object.entries(destCounts).sort((a, b) => b[1] - a[1])) {
+    const pct = (count / maxDest) * 100;
+    const emoji = dest === "Puerto Rico" ? "\u{1F3D6}\uFE0F" : "\u{1F334}";
+    destHtml += `<div class="vote-bar-row"><span class="vote-bar-label">${emoji} ${dest}</span><div class="vote-bar-track"><div class="vote-bar-fill" style="width:${pct}%"></div></div><span class="vote-bar-count">${count}</span></div>`;
+  }
+  document.getElementById("gr-dest-votes").innerHTML = destHtml;
+
+  // Hotel votes
+  const hotelCounts = {};
+  rsvps.forEach(r => { hotelCounts[r.hotel] = (hotelCounts[r.hotel] || 0) + 1; });
+  let hotelHtml = "";
+  const maxHotel = Math.max(...Object.values(hotelCounts));
+  for (const [hotel, count] of Object.entries(hotelCounts).sort((a, b) => b[1] - a[1]).slice(0, 8)) {
+    const pct = (count / maxHotel) * 100;
+    hotelHtml += `<div class="vote-bar-row"><span class="vote-bar-label">${hotel}</span><div class="vote-bar-track"><div class="vote-bar-fill" style="width:${pct}%"></div></div><span class="vote-bar-count">${count}</span></div>`;
+  }
+  document.getElementById("gr-hotel-votes").innerHTML = hotelHtml;
+
+  // Picks table
+  let tableHtml = '<table class="rsvp-table"><thead><tr><th>Name</th><th>Destination</th><th>Hotel</th><th>Package</th><th>From</th><th>Nights</th><th>Per Person</th></tr></thead><tbody>';
+  rsvps.forEach(r => {
+    tableHtml += `<tr><td><strong>${r.name}</strong></td><td>${r.destination}</td><td>${r.hotel}</td><td>${r.package}</td><td>${r.origin}</td><td>${r.nights}</td><td>${fmt(r.perPerson)}</td></tr>`;
+  });
+  tableHtml += '</tbody></table>';
+  document.getElementById("gr-picks-table").innerHTML = tableHtml;
+}
+
+// ── VIEW TOGGLE ───────────────────────────────────────────────────────
+document.querySelectorAll("[data-view]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-view]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    const v = btn.dataset.view;
+    document.getElementById("builder-view").style.display = v === "builder" ? "" : "none";
+    document.getElementById("group-results-view").classList.toggle("active", v === "results");
+    document.getElementById("chat-section").style.display = v === "builder" ? "" : "none";
+    if (v === "results") renderGroupResults();
+  });
+});
+
+// ── GROUP CHAT ────────────────────────────────────────────────────────
+const SEED_CHAT = [
+  { name: "Brooklyn", msg: "LISTEN. I am turning THIRTY and we are doing this. No excuses. Book your flights or I'm booking them FOR you. 🎂🔥", ts: "2026-04-20T22:02:00Z" },
+  { name: "Madison", msg: "ok so the Canadian is coming and we WILL need a room with a good lock and a do not disturb sign if you know what I mean 🍷😏 wine + vacation = y'all won't see us til noon", ts: "2026-04-20T22:08:00Z" },
+  { name: "Andi", msg: "YESSSSS LET'S GOOOOOO 🗣️🗣️🗣️ I literally SCREAMED when I saw this page. BR30KLYN ERA BABY!!!! 🎉🎉🎉", ts: "2026-04-20T22:14:00Z" },
+  { name: "Jack", msg: "lol nice", ts: "2026-04-20T22:16:00Z" },
+  { name: "Zach", msg: "ok so I'm coming but I need to know the CHEAPEST option because the Hill doesn't pay like you people think it does 😭💸 the NUANCES of government work are very complex and very NOT lucrative", ts: "2026-04-20T22:19:00Z" },
+  { name: "Derek", msg: "I literally built this whole website for you people so the LEAST you can do is submit your picks 😤", ts: "2026-04-20T22:25:00Z" },
+  { name: "Zach", msg: "Derek you're so talented and smart and strong and good at websites... anyway what room are you staying in asking for no reason 👀💜", ts: "2026-04-20T22:31:00Z" },
+  { name: "OhioTeacher1", msg: "Zach you make $47k and act like you're running the country babe sit DOWN 😂💀", ts: "2026-04-20T22:38:00Z" },
+  { name: "Madison", msg: "the Canadian is asking if the rooms have a balcony and I'm like babe we are NOT leaving the room long enough to find out 🤭🍷", ts: "2026-04-20T22:44:00Z" },
+  { name: "Jack", msg: "wait is weed legal there", ts: "2026-04-20T22:46:00Z" },
+  { name: "OhioTeacher2", msg: "I just spent my last paycheck on classroom supplies so this trip better have a PAYMENT PLAN 😂😭 but I'M COMING", ts: "2026-04-20T22:50:00Z" },
+  { name: "Andi", msg: "EVERYONE SHUT UP AND LOOK AT HOTEL XCARET ARTE. IT'S ADULTS ONLY. IT'S ALL INCLUSIVE. IT'S GIVING BIRTHDAY QUEEN ENERGY 👑🔥🔥🔥", ts: "2026-04-20T22:56:00Z" },
+  { name: "Zach", msg: "I can't afford that but I WILL sell a kidney. Derek if I share your room I can save money just think about it logically 🧠❤️", ts: "2026-04-20T23:02:00Z" },
+  { name: "Brooklyn", msg: "I'm literally crying in this Uber right now reading these messages. I love every single one of you unhinged humans 😭🥹💖", ts: "2026-04-20T23:08:00Z" },
+  { name: "Derek", msg: "Zach please stop DMing me. Everyone else SUBMIT YOUR PICKS so we can lock this in 🔒", ts: "2026-04-20T23:20:00Z" },
+  { name: "Madison", msg: "the Canadian just asked 'is Puerto Rico international?' ...this man has a masters degree. anyway we're doing Mexico 💀✈️", ts: "2026-04-20T23:26:00Z" },
+  { name: "Andi", msg: "THIS IS NOT A DRILL PEOPLE. BR30KLYN NYE 2026. WE ARE LOCKED IN. SUBMIT. YOUR. PICKS. NOWWWW 📣📣📣", ts: "2026-04-20T23:32:00Z" },
+  { name: "OhioTeacher1", msg: "Just told my principal I have a 'family obligation' Dec 28-Jan 2. Family = Brooklyn. Obligation = tequila. LET'S RIDE 🚀", ts: "2026-04-20T23:38:00Z" },
+  { name: "Zach", msg: "Fine I submitted my pick. I chose whatever Derek chose. Coincidence. Total coincidence. 🫠", ts: "2026-04-20T23:44:00Z" },
+  { name: "Zach", msg: "I hope I see Derek in the shower at the resort 🥵🚿", ts: "2026-04-20T23:48:00Z" },
+  { name: "Zach", msg: "WHOOPS. Wrong chat. That was for... someone else. Please ignore. PLEASE. 🫣😭", ts: "2026-04-20T23:49:00Z" },
+  { name: "Andi", msg: "SCREENSHOTTED. THIS IS GOING IN THE BIRTHDAY SLIDESHOW. 📸💀💀💀", ts: "2026-04-20T23:51:00Z" },
+  { name: "Jack", msg: "haha bro what 😂", ts: "2026-04-20T23:53:00Z" },
+];
+
+function getComments() {
+  try { return JSON.parse(localStorage.getItem("nye_trip_comments") || "[]"); } catch(e) { return []; }
+}
+function saveComment(c) {
+  let all = getComments();
+  all.push(c);
+  if (all.length > 50) all = all.slice(-50);
+  localStorage.setItem("nye_trip_comments", JSON.stringify(all));
+}
+
+// Seed chat on first visit
+if (getComments().length === 0) {
+  localStorage.setItem("nye_trip_comments", JSON.stringify(SEED_CHAT));
+}
+
+function renderComments() {
+  const msgs = getComments();
+  const el = document.getElementById("chat-messages");
+  if (msgs.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:#bbb;padding:20px;">No messages yet \u2014 be the first to say something!</div>';
+    return;
+  }
+  el.innerHTML = msgs.map(m => {
+    const d = new Date(m.ts);
+    const timeStr = d.toLocaleDateString("en-US", { month:"short", day:"numeric" }) + " " + d.toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" });
+    return `<div class="chat-bubble"><div class="cb-header"><span class="cb-name">${m.name}</span><span class="cb-time">${timeStr}</span></div><div class="cb-msg">${m.msg}</div></div>`;
+  }).join("");
+  el.scrollTop = 0;
+}
+
+function postComment() {
+  const nameEl = document.getElementById("chat-name");
+  const msgEl = document.getElementById("chat-msg");
+  const name = nameEl.value.trim();
+  const msg = msgEl.value.trim();
+  if (!name || !msg) return;
+  // Basic XSS sanitization
+  const safe = (s) => s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  saveComment({ name: safe(name), msg: safe(msg), ts: new Date().toISOString() });
+  msgEl.value = "";
+  renderComments();
+}
+
+document.getElementById("chat-post").addEventListener("click", postComment);
+document.getElementById("chat-msg").addEventListener("keydown", e => {
+  if (e.key === "Enter") postComment();
+});
+
+// ── EVENT WIRING ──────────────────────────────────────────────────────
+document.querySelectorAll("[data-dest]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-dest]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.destination = btn.dataset.dest;
+    state.hotelIdx = 0;
+    renderHotels();
+    renderResult();
+  });
+});
+
+document.querySelectorAll("[data-pkg]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-pkg]").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    state.package = btn.dataset.pkg;
+    renderResult();
+  });
+});
+
+document.getElementById("hotel").addEventListener("change", e => {
+  state.hotelIdx = parseInt(e.target.value);
+  renderHotelInfo();
+  renderResult();
+});
+
+document.getElementById("origin").addEventListener("change", e => {
+  state.origin = e.target.value;
+  renderResult();
+});
+
+document.getElementById("nights").addEventListener("input", e => {
+  state.nights = parseInt(e.target.value) || 1;
+  renderResult();
+});
+
+// ── HASH IMPORT ───────────────────────────────────────────────────────
+function checkHashImport() {
+  const hash = window.location.hash.slice(1);
+  if (!hash) return;
+  const rsvp = decodeHashToRSVP(hash);
+  if (!rsvp) return;
+  // Check if already imported (by name + timestamp proximity)
+  const existing = getRSVPs();
+  const isDupe = existing.some(r => r.name === rsvp.name && r.hotel === rsvp.hotel && r.destination === rsvp.destination);
+  if (!isDupe) {
+    saveRSVP(rsvp);
+    setTimeout(() => showToast("\u{1F389} Added " + rsvp.name + "'s pick!"), 500);
+  }
+}
+checkHashImport();
+
+// ── INIT ──────────────────────────────────────────────────────────────
+renderHotels();
+renderResult();
+renderComments();
+</script>
+</body>
+</html>
